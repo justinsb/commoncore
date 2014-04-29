@@ -33,6 +33,7 @@ def create_dir(path, mode, owner, group):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
+
     chmod(path, mode)
     chown(path, owner, group)
 
@@ -45,27 +46,27 @@ def chown(path, owner, group):
     run_command(cmd)
 
 def create_user(name):
-	cmd = ['adduser', '--system', '--no-create-home', '--group', name]
-	run_command(cmd)
+    cmd = ['adduser', '--system', '--no-create-home', '--group', name]
+    run_command(cmd)
 
 def clone_source(repo):
-	destdir = tempfile.mkdtemp()
-	print "Cloning %s into %s" % (repo, destdir)
-	cmd = ['git', 'clone', repo, destdir]
-	run_command(cmd)
-	return destdir
+    destdir = tempfile.mkdtemp()
+    print "Cloning %s into %s" % (repo, destdir)
+    cmd = ['git', 'clone', repo, destdir]
+    run_command(cmd)
+    return destdir
 
 def copy_file(src, dst, mode, owner, group):
-	shutil.copyfile(src, dst)
+    shutil.copyfile(src, dst)
     chmod(dst, mode)
     chown(dst, owner, group)
 
 def create_service(name):
-	src = name + '.service'
-	dst = '/lib/systemd/system/' + name + '.service'
-	shutil.copyfile(src, dst)
-	run_command(['systemctl', 'enable', name + '.service'])
-	run_command(['systemctl', 'start', name + '.service'])
+    src = name + '.service'
+    dst = '/lib/systemd/system/' + name + '.service'
+    shutil.copyfile(src, dst)
+    run_command(['systemctl', 'enable', name + '.service'])
+    run_command(['systemctl', 'start', name + '.service'])
 
 create_user('etcd')
 
