@@ -33,17 +33,20 @@ def create_dir(path, mode, owner, group):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
+    chmod(path, mode)
+    chown(path, owner, group)
 
+def chmod(path, mode):
     cmd = ['chmod', mode, path]
     run_command(cmd)
 
+def chown(path, owner, group):
     cmd = ['chown', owner + ':' + group, path]
     run_command(cmd)
 
 def create_user(name):
 	cmd = ['adduser', '--system', '--no-create-home', '--group', name]
 	run_command(cmd)
-
 
 def clone_source(repo):
 	destdir = tempfile.mkdtemp()
@@ -52,8 +55,10 @@ def clone_source(repo):
 	run_command(cmd)
 	return destdir
 
-def copy_file(src, dst):
+def copy_file(src, dst, mode, owner, group):
 	shutil.copyfile(src, dst)
+    chmod(dst, mode)
+    chown(dst, owner, group)
 
 def create_service(name):
 	src = name + '.service'
@@ -69,7 +74,7 @@ create_dir('/var/run/etcd', '0755', 'etcd', 'etcd')
 
 etcd = clone_source('https://github.com/coreos/etcd.git')
 run_command([os.path.join(etcd, 'build')], cwd=etcd)
-copy_file(os.path.join(etcd, 'bin/etcd'), '/usr/bin/etcd')
+copy_file(os.path.join(etcd, 'bin/etcd'), '/usr/bin/etcd', '0755', 'root', 'root')
 
 create_service('etcd')
 
