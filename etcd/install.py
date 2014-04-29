@@ -3,7 +3,7 @@
 from pinstall.direct import *
 
 create_group('etcd')
-create_user('etcd')
+create_user('etcd', group='etcd')
 
 create_dir('/var/lib/etcd', '0755', 'etcd', 'etcd')
 create_dir('/var/run/etcd', '0755', 'etcd', 'etcd')
